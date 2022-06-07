@@ -1,0 +1,98 @@
+/*
+Skin Name: Nivo Slider Light Theme
+Skin URI: http://nivo.dev7studios.com
+Description: A light skin for the Nivo Slider.
+Version: 1.0
+Author: Gilbert Pellegrom
+Author URI: http://dev7studios.com
+Supports Thumbs: true
+*/
+
+.theme-light{
+  &.slider-wrapper {
+    background: #fff;
+    padding: 10px;
+  }
+  .nivoSlider {
+    position:relative;
+    background:#fff url(../../asset/light/loading.gif) no-repeat 50% 50%;
+    margin-bottom:10px;
+    overflow: visible;
+    img {
+      position:absolute;
+      top:0;
+      left:0;
+      display:none;
+    }
+    a {
+      border:0;
+      display:block;
+    }
+  }
+  .nivo-controlNav {
+    text-align: left;
+    padding: 0;
+    position: relative;
+    z-index: 10;
+    a {
+      display:inline-block;
+      width:10px;
+      height:10px;
+      background:url(../../asset/light/bullets.png) no-repeat;
+      text-indent:-9999px;
+      border:0;
+      margin: 0 2px;
+      &.active {
+        background-position:0 100%;
+      }
+    }
+    &.nivo-thumbs-enabled {
+      width: 80%;
+      a {
+        width: auto;
+        height: auto;
+        background: none;
+        margin-bottom: 5px;
+      }
+      img {
+        display: block;
+        width: 120px;
+        height: auto;
+      }
+    }
+  }
+  .nivo-directionNav a {
+    display:block;
+    width:30px;
+    height:30px;
+    background: url(../../asset/light/arrows.png) no-repeat;
+    text-indent:-9999px;
+    border:0;
+    top: auto;
+    bottom: -36px;
+    z-index: 11;
+    &:hover {
+      background-color: #eee;
+      border-radius: 2px;
+    }
+  }
+  a.nivo-nextNav {
+    background-position:160% 50%;
+    right:0;
+  }
+  a.nivo-prevNav {
+    background-position:-60% 50%;
+    left: auto;
+    right: 35px;
+  }
+  .nivo-caption {
+    font-family: Helvetica, Arial, sans-serif;
+    a {
+      color:#fff;
+      border-bottom:1px dotted #fff;
+      &:hover {
+        color:#fff;
+      }
+    }
+  }
+}
