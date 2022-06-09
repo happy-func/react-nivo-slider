@@ -1,1 +1,1 @@
-export { Swiper, SwiperSlide } from './components';
+export { Swiper, Image, Link } from './components';

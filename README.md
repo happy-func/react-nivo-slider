@@ -1,5 +1,8 @@
 # react-nivo-slider
 
+## Project Status
+Processing
+
 ## Getting Started
 
 Install dependencies,

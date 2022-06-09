@@ -13,6 +13,7 @@
     "test:coverage": "umi-test --coverage",
     "prepublishOnly": "npm run build"
   },
+  "main": "es/index.js",
   "module": "es/index.js",
   "typings": "es/index.d.ts",
   "gitHooks": {
