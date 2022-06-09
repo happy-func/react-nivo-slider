@@ -1,4 +1,5 @@
-import React from 'react';
+import React , { useEffect , useRef } from 'react';
+import { getChildren } from '../../utils';
 
 function Swiper(props: SwiperProps) {
   const {
@@ -22,12 +23,46 @@ function Swiper(props: SwiperProps) {
     afterChange,
     afterLoad,
     lastSlide,
+    children
   } = props;
+  const variablesRef = useRef<VariablesRefProps>({
+    currentSlide: 0,
+    currentImage: '',
+    totalSlides: 0,
+    running: false,
+    paused: false,
+    stop: false,
+    controlNavEl: false
+  });
+  useEffect(() => {
+    const { slides } = getChildren(children);
+    variablesRef.current.totalSlides = slides.length;
+    if (randomStart) {
+      variablesRef.current.currentSlide = Math.floor(Math.random() * variablesRef.current.totalSlides);
+    }
+    if (startSlide > 0) {
+      if (startSlide >= slides.length) variablesRef.current.currentSlide = slides.length - 1;
+    }
+  }, []);
   return (
     <div className={`slider-wrapper theme-${theme}`}>
-      <div className="nivoSlider"></div>
+      <div className="nivoSlider">
+
+      </div>
     </div>
   );
+}
+
+Swiper.displayName = `Swiper`;
+
+export interface VariablesRefProps {
+  currentSlide: number;
+  currentImage: string;
+  totalSlides: number;
+  running: boolean;
+  paused: boolean;
+  stop: boolean;
+  controlNavEl: boolean;
 }
 
 export type EffectType =
@@ -73,6 +108,7 @@ export interface SwiperProps {
   slideshowEnd?: () => void;
   lastSlide?: () => void;
   afterLoad?: () => void;
+  children: React.ReactNode;
 }
 
 export default Swiper;
