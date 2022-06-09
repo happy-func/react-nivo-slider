@@ -1,5 +1,5 @@
-import React , { useEffect , useRef } from 'react';
-import { getChildren } from '../../utils';
+import React, { useEffect, useRef, useState } from 'react';
+import { getChildren, getSlideImageAttr, updateSwiperImagesHeight } from '../../utils';
 
 function Swiper(props: SwiperProps) {
   const {
@@ -23,31 +23,62 @@ function Swiper(props: SwiperProps) {
     afterChange,
     afterLoad,
     lastSlide,
-    children
+    children,
   } = props;
+  // Set first background
+  const sliderImgRef = useRef<HTMLImageElement>(document.createElement('img'));
   const variablesRef = useRef<VariablesRefProps>({
     currentSlide: 0,
-    currentImage: '',
+    currentImage: {
+      src: '',
+      alt: '',
+      title: '',
+    },
     totalSlides: 0,
     running: false,
     paused: false,
     stop: false,
-    controlNavEl: false
+    controlNavEl: false,
   });
+  const swiperRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const [swiperWidth, setSwiperWidth] = useState(800);
+  const { slides } = getChildren(children);
+  // onresize
+  function onResizeHandler() {
+    const swiperWid = swiperRef.current.offsetWidth;
+    setSwiperWidth(swiperWid);
+    const currentImage = getSlideImageAttr(slides[variablesRef.current.currentSlide]);
+    sliderImgRef.current.setAttribute(`src`, currentImage?.src as string);
+    sliderImgRef.current.setAttribute(`alt`, currentImage?.alt as string);
+    sliderImgRef.current.setAttribute(`height`, `auto`);
+  }
   useEffect(() => {
-    const { slides } = getChildren(children);
+    const swiperWid = swiperRef.current.offsetWidth;
+    setSwiperWidth(swiperWid);
+    updateSwiperImagesHeight(swiperRef.current.children, swiperWidth);
     variablesRef.current.totalSlides = slides.length;
     if (randomStart) {
-      variablesRef.current.currentSlide = Math.floor(Math.random() * variablesRef.current.totalSlides);
+      variablesRef.current.currentSlide = Math.floor(
+        Math.random() * variablesRef.current.totalSlides,
+      );
     }
     if (startSlide > 0) {
       if (startSlide >= slides.length) variablesRef.current.currentSlide = slides.length - 1;
     }
+    const currentImage = getSlideImageAttr(slides[variablesRef.current.currentSlide]);
+    sliderImgRef.current.setAttribute(`src`, currentImage?.src as string);
+    sliderImgRef.current.setAttribute(`alt`, currentImage?.alt as string);
+    variablesRef.current.currentImage = currentImage;
+  }, []);
+  useEffect(() => {
+    window.addEventListener('resize', onResizeHandler);
+    return () => window.removeEventListener('resize', onResizeHandler);
   }, []);
   return (
     <div className={`slider-wrapper theme-${theme}`}>
-      <div className="nivoSlider">
-
+      <div className="nivoSlider" ref={swiperRef}>
+        {children}
+        <img className="nivo-main-image" ref={sliderImgRef} alt="first background" />
       </div>
     </div>
   );
@@ -55,9 +86,15 @@ function Swiper(props: SwiperProps) {
 
 Swiper.displayName = `Swiper`;
 
+interface SlideImageProps {
+  src: string;
+  alt?: string;
+  title?: string;
+}
+
 export interface VariablesRefProps {
   currentSlide: number;
-  currentImage: string;
+  currentImage?: SlideImageProps;
   totalSlides: number;
   running: boolean;
   paused: boolean;
