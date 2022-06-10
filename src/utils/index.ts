@@ -9,9 +9,14 @@ export function getChildren(c: React.ReactNode) {
   React.Children.toArray(c).forEach((child) => {
     if (child.type?.displayName === 'Image') {
       slides.push(child);
-    } else if (child.type?.displayName === `Link` && child.props.children?.type?.displayName === `Image`) {
-      slides.push(child.props.children)
+    } else if (
+      child.type?.displayName === `Link` &&
+      child.props.children?.type?.displayName === `Image`
+    ) {
+      slides.push(child.props.children);
     }
   });
   return { slides };
 }
+
+export function cloneDeep() {}

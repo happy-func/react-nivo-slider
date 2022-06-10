@@ -1,5 +1,5 @@
-import React , { createContext , useEffect , useMemo , useRef , useState } from 'react';
-import { getChildren } from '../../utils';
+import React, { createContext, CSSProperties, useEffect, useRef, useState } from 'react';
+import { clsx, getChildren } from '../../utils';
 import BackgroundImage from '../Background';
 
 export const SwiperContext = createContext({
@@ -28,9 +28,13 @@ function Swiper(props: SwiperProps) {
     afterChange,
     afterLoad,
     lastSlide,
+    slideshowEnd,
     children,
+    className,
+    style,
   } = props;
   // Set first background
+  const [sliderImage, setSliderImage] = useState({ src: '', alt: '', height: 'auto' });
   const variablesRef = useRef<VariablesRefProps>({
     currentSlide: 0,
     currentImage: {
@@ -46,18 +50,163 @@ function Swiper(props: SwiperProps) {
   });
   const swiperRef = useRef<HTMLDivElement>(document.createElement('div'));
   const [swiperWidth, setSwiperWidth] = useState(800);
+  // nivo-slice
+  const [nivoSlices, setNivoSlices] = useState([]);
+  // nivo-boxes
+  const [nivoBoxes, setNivoBoxes] = useState([]);
   const { slides } = getChildren(children);
-  const backgroundMemo = useMemo(() => {
-    return slides[variablesRef.current.currentSlide].props;
-  }, [variablesRef.current.currentSlide]);
+  function processCaption() {
+    // TODO processCaption
+  }
+  function createSlices() {
+    // TODO createSlices
+  }
+  // Private run method
+  function nivoRun(nudge: string | boolean) {
+    // Trigger the lastSlide callback
+    if (variablesRef.current.currentSlide === variablesRef.current.totalSlides - 1) {
+      lastSlide && lastSlide();
+    }
+    // Stop
+    if (variablesRef.current.stop && !nudge) {
+      return false;
+    }
+    // Trigger the beforeChange callback
+    beforeChange && beforeChange();
+    // Set current background before change
+    if (!nudge) {
+      setSliderImage((prevState) => ({ ...prevState, src: variablesRef.current.currentImage.src }));
+    } else {
+      if (nudge === 'prev') {
+        setSliderImage((prevState) => ({
+          ...prevState,
+          src: variablesRef.current.currentImage.src,
+        }));
+      }
+      if (nudge === 'next') {
+        setSliderImage((prevState) => ({
+          ...prevState,
+          src: variablesRef.current.currentImage.src,
+        }));
+      }
+    }
+    variablesRef.current.currentSlide++;
+    // Trigger the slideshowEnd callback
+    if (variablesRef.current.currentSlide === variablesRef.current.totalSlides) {
+      variablesRef.current.currentSlide = 0;
+      slideshowEnd && slideshowEnd();
+    }
+
+    if (variablesRef.current.currentSlide < 0) {
+      variablesRef.current.currentSlide = variablesRef.current.totalSlides - 1;
+    }
+
+    // Set vars.currentImage
+    variablesRef.current.currentImage = slides[variablesRef.current.currentSlide].props;
+
+    // Set active links
+    if (controlNav) {
+      // TODO controlNav
+    }
+
+    // Process caption
+    processCaption();
+
+    // Remove any slices from last transition
+    // TODO slices control
+
+    // Remove any boxes from last transition
+    // TODO boxes control
+
+    let currentEffect = effect;
+    let anims: EffectType[] = [];
+
+    // Generate random effect
+    if (effect === `random`) {
+      anims = [
+        'sliceDownRight',
+        'sliceDownLeft',
+        'sliceUpRight',
+        'sliceUpLeft',
+        'sliceUpDown',
+        'sliceUpDownLeft',
+        'fold',
+        'fade',
+        'boxRandom',
+        'boxRain',
+        'boxRainReverse',
+        'boxRainGrow',
+        'boxRainGrowReverse',
+      ];
+      currentEffect = anims[Math.floor(Math.random() * (anims.length + 1))] as EffectType;
+      if (currentEffect === undefined) {
+        currentEffect = 'fade';
+      }
+    }
+
+    // Run random effect from specified set (eg: effect:'fold,fade')
+    if (effect.indexOf(',') !== -1) {
+      anims = effect.split(',') as EffectType[];
+      currentEffect = anims[Math.floor(Math.random() * anims.length)] as EffectType;
+      if (currentEffect === undefined) {
+        currentEffect = 'fade';
+      }
+    }
+
+    // Custom transition as defined by "data-transition" attribute
+    if (variablesRef.current.currentImage.transition) {
+      currentEffect = variablesRef.current.currentImage.transition;
+    }
+
+    // Run effects
+    variablesRef.current.running = true;
+    let timeBuff = 0,
+      i = 0,
+      tempSlices = '',
+      firstSlice = '',
+      totalBoxes = '',
+      boxes = '';
+    if (
+      currentEffect === 'sliceDown' ||
+      currentEffect === 'sliceDownRight' ||
+      currentEffect === 'sliceDownLeft'
+    ) {
+      createSlices();
+      timeBuff = 0;
+      i = 0;
+      if (currentEffect === 'sliceDownLeft') {
+        setNivoSlices((prevState) => [...prevState].reverse());
+      }
+
+      tempSlices.each(function () {
+        var slice = $(this);
+        slice.css({ top: '0px' });
+        if (i === slices - 1) {
+          setTimeout(function () {
+            slice.animate({ opacity: '1.0' }, settings.animSpeed, '', function () {
+              slider.trigger('nivo:animFinished');
+            });
+          }, 100 + timeBuff);
+        } else {
+          setTimeout(function () {
+            slice.animate({ opacity: '1.0' }, settings.animSpeed);
+          }, 100 + timeBuff);
+        }
+        timeBuff += 50;
+        i++;
+      });
+    }
+  }
   // onresize
   function onResizeHandler() {
     const swiperWid = swiperRef.current.offsetWidth;
     setSwiperWidth(swiperWid);
-    variablesRef.current.currentImage = backgroundMemo;
+    const currentImage = slides[variablesRef.current.currentSlide].props;
+    variablesRef.current.currentImage = currentImage;
+    setSliderImage({ ...currentImage, height: 'auto' });
   }
   useEffect(() => {
-    console.log(slides)
+    console.log(slides);
     const swiperWid = swiperRef.current.offsetWidth;
     setSwiperWidth(swiperWid);
     variablesRef.current.totalSlides = slides.length;
@@ -69,7 +218,9 @@ function Swiper(props: SwiperProps) {
     if (startSlide > 0) {
       if (startSlide >= slides.length) variablesRef.current.currentSlide = slides.length - 1;
     }
-    variablesRef.current.currentImage = backgroundMemo;
+    const currentImage = slides[variablesRef.current.currentSlide].props;
+    variablesRef.current.currentImage = currentImage;
+    setSliderImage(currentImage);
   }, []);
   useEffect(() => {
     window.addEventListener('resize', onResizeHandler);
@@ -77,10 +228,15 @@ function Swiper(props: SwiperProps) {
   }, []);
   return (
     <SwiperContext.Provider value={{ swiperWidth }}>
-      <div className={`slider-wrapper theme-${theme}`}>
+      <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
         <div className="nivoSlider" ref={swiperRef}>
           {children}
-          <BackgroundImage src={backgroundMemo.src} alt={backgroundMemo.alt} width={swiperWidth} />
+          <BackgroundImage
+            src={sliderImage.src}
+            alt={sliderImage.alt}
+            width={swiperWidth}
+            height={sliderImage.height}
+          />
         </div>
       </div>
     </SwiperContext.Provider>
@@ -93,11 +249,12 @@ interface SlideImageProps {
   src: string;
   alt?: string;
   title?: string;
+  transition?: EffectType;
 }
 
 export interface VariablesRefProps {
   currentSlide: number;
-  currentImage?: SlideImageProps;
+  currentImage: SlideImageProps;
   totalSlides: number;
   running: boolean;
   paused: boolean;
@@ -149,6 +306,8 @@ export interface SwiperProps {
   lastSlide?: () => void;
   afterLoad?: () => void;
   children: React.ReactNode;
+  className?: string;
+  style?: CSSProperties;
 }
 
 export default Swiper;
