@@ -58,8 +58,13 @@ function Swiper(props: SwiperProps) {
   function processCaption() {
     // TODO processCaption
   }
-  function createSlices() {
+  function createSlices(): NivoSlice[] {
     // TODO createSlices
+    return [];
+  }
+  // Event when Animation finishes
+  function NivoAnimFinished() {
+    // TODO NivoAnimFinished
   }
   // Private run method
   function nivoRun(nudge: string | boolean) {
@@ -113,10 +118,10 @@ function Swiper(props: SwiperProps) {
     processCaption();
 
     // Remove any slices from last transition
-    // TODO slices control
+    setNivoSlices([]);
 
     // Remove any boxes from last transition
-    // TODO boxes control
+    setNivoBoxes([]);
 
     let currentEffect = effect;
     let anims: EffectType[] = [];
@@ -162,7 +167,7 @@ function Swiper(props: SwiperProps) {
     variablesRef.current.running = true;
     let timeBuff = 0,
       i = 0,
-      tempSlices = '',
+      tempNivoSlices = [],
       firstSlice = '',
       totalBoxes = '',
       boxes = '';
@@ -171,26 +176,23 @@ function Swiper(props: SwiperProps) {
       currentEffect === 'sliceDownRight' ||
       currentEffect === 'sliceDownLeft'
     ) {
-      createSlices();
+      tempNivoSlices = createSlices();
       timeBuff = 0;
       i = 0;
       if (currentEffect === 'sliceDownLeft') {
-        setNivoSlices((prevState) => [...prevState].reverse());
+        tempNivoSlices.reverse();
       }
 
-      tempSlices.each(function () {
-        var slice = $(this);
-        slice.css({ top: '0px' });
+      tempNivoSlices.forEach(function (slice) {
+        slice.style.top = 0;
+        slice.style.transitionProperty = `opacity`;
+        slice.style.transitionDuration = `${animSpeed}ms`;
+        slice.style.opacity = 1;
+        slice.style.transitionDelay = `${100 + timeBuff}ms`;
         if (i === slices - 1) {
           setTimeout(function () {
-            slice.animate({ opacity: '1.0' }, settings.animSpeed, '', function () {
-              slider.trigger('nivo:animFinished');
-            });
-          }, 100 + timeBuff);
-        } else {
-          setTimeout(function () {
-            slice.animate({ opacity: '1.0' }, settings.animSpeed);
-          }, 100 + timeBuff);
+            if (typeof NivoAnimFinished !== `undefined`) NivoAnimFinished();
+          }, 100 + timeBuff + animSpeed);
         }
         timeBuff += 50;
         i++;
@@ -260,6 +262,11 @@ export interface VariablesRefProps {
   paused: boolean;
   stop: boolean;
   controlNavEl: boolean;
+}
+
+interface NivoSlice {
+  src: string;
+  style: CSSProperties;
 }
 
 export type EffectType =
