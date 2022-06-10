@@ -6,7 +6,7 @@ export function clsx(...list: (string | undefined)[]): string {
 
 export function getChildren(c: React.ReactNode) {
   const slides: React.ReactElement<any>[] = [];
-  React.Children.toArray(c).forEach((child) => {
+  React.Children.toArray(c).forEach((child: any) => {
     if (child.type?.displayName === 'Image') {
       slides.push(child);
     } else if (

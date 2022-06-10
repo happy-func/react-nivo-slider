@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+// @ts-ignore
 import { animated, useSpring } from 'react-spring';
 
 function NivoSlice(props: NivoSliceProps) {
