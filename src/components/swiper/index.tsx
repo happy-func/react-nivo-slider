@@ -1,6 +1,7 @@
 import React, { createContext, CSSProperties, useEffect, useRef, useState } from 'react';
 import { clsx, getChildren } from '../../utils';
-import BackgroundImage from '../Background';
+import BackgroundImage from '../background';
+import { NivoSliceProps } from '../nivo-slice';
 
 export const SwiperContext = createContext({
   swiperWidth: 800,
@@ -51,14 +52,14 @@ function Swiper(props: SwiperProps) {
   const swiperRef = useRef<HTMLDivElement>(document.createElement('div'));
   const [swiperWidth, setSwiperWidth] = useState(800);
   // nivo-slice
-  const [nivoSlices, setNivoSlices] = useState([]);
+  const [nivoSlices, setNivoSlices] = useState<NivoSliceProps[]>([]);
   // nivo-boxes
   const [nivoBoxes, setNivoBoxes] = useState([]);
   const { slides } = getChildren(children);
   function processCaption() {
     // TODO processCaption
   }
-  function createSlices(): NivoSlice[] {
+  function createSlices(): NivoSliceProps[] {
     // TODO createSlices
     return [];
   }
@@ -183,12 +184,21 @@ function Swiper(props: SwiperProps) {
         tempNivoSlices.reverse();
       }
 
-      tempNivoSlices.forEach(function (slice) {
-        slice.style.top = 0;
-        slice.style.transitionProperty = `opacity`;
-        slice.style.transitionDuration = `${animSpeed}ms`;
-        slice.style.opacity = 1;
-        slice.style.transitionDelay = `${100 + timeBuff}ms`;
+      tempNivoSlices = tempNivoSlices.map(function (slice) {
+        const sliceTemp = JSON.parse(JSON.stringify(slice));
+        sliceTemp.style = {
+          top: 0,
+        };
+        sliceTemp.from = {
+          opacity: 0,
+        };
+        sliceTemp.to = {
+          opacity: 1,
+        };
+        sliceTemp.config = {
+          duration: animSpeed,
+        };
+        sliceTemp.delay = 100 + timeBuff;
         if (i === slices - 1) {
           setTimeout(function () {
             if (typeof NivoAnimFinished !== `undefined`) NivoAnimFinished();
@@ -196,7 +206,9 @@ function Swiper(props: SwiperProps) {
         }
         timeBuff += 50;
         i++;
+        return sliceTemp;
       });
+      setNivoSlices(tempNivoSlices);
     }
   }
   // onresize
@@ -262,11 +274,6 @@ export interface VariablesRefProps {
   paused: boolean;
   stop: boolean;
   controlNavEl: boolean;
-}
-
-interface NivoSlice {
-  src: string;
-  style: CSSProperties;
 }
 
 export type EffectType =

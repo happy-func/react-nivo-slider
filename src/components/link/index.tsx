@@ -9,7 +9,11 @@ function Link(props: LinkProps) {
   );
 }
 
-interface LinkProps extends React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+interface LinkProps
+  extends React.DetailedHTMLProps<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    HTMLAnchorElement
+  > {
   [key: string]: any;
   active?: boolean;
 }
