@@ -3,8 +3,8 @@ import React, { CSSProperties } from 'react';
 import { animated, useSpring } from 'react-spring';
 
 function NivoSlice(props: NivoSliceProps) {
-  const { to, from, config, delay, style, src, imageStyle } = props;
-  const animateStyle = useSpring({ to, from, config, delay });
+  const { to, from, config, delay, style, src, imageStyle, onRest, onChange, onDelayEnd } = props;
+  const animateStyle = useSpring({ to, from, config, delay, onRest, onChange, onDelayEnd });
   return (
     /* @ts-ignore */
     <animated.div style={{ ...style, ...animateStyle }} className="nivo-slice">
@@ -22,6 +22,9 @@ export interface NivoSliceProps {
   imageStyle?: CSSProperties;
   style?: CSSProperties;
   uid: string;
+  onRest?: any;
+  onChange?: any;
+  onDelayEnd?: any;
 }
 
 NivoSlice.displayName = `NivoSlice`;

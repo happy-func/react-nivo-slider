@@ -132,6 +132,7 @@ function Swiper(props: SwiperProps) {
   // Event when Animation finishes
   function NivoAnimFinished() {
     // TODO NivoAnimFinished
+    console.log('NivoAnimFinished');
   }
   // Private run method
   function nivoRun(nudge: string | boolean) {
@@ -264,12 +265,50 @@ function Swiper(props: SwiperProps) {
         };
         sliceTemp.delay = 100 + timeBuff;
         if (i === slices - 1) {
-          setTimeout(function () {
-            if (typeof NivoAnimFinished !== `undefined`) NivoAnimFinished();
-          }, 100 + timeBuff + animSpeed);
+          sliceTemp.onRest = () => {
+            NivoAnimFinished();
+          }
         }
         timeBuff += 50;
         i++;
+        return sliceTemp;
+      });
+      setNivoSlices(tempNivoSlices);
+    } else if (currentEffect === `sliceUp` || currentEffect === `sliceUpRight` || currentEffect === `sliceUpLeft`) {
+      tempNivoSlices = createSlices();
+      timeBuff = 0;
+      i = 0;
+      let v = 0;
+      if (currentEffect === `sliceUpLeft`) {
+        tempNivoSlices.reverse();
+      }
+      tempNivoSlices = tempNivoSlices.map(item => {
+        const sliceTemp = JSON.parse(JSON.stringify(item));
+        if (i === 0) {
+          sliceTemp.style.top = 0;
+          i++;
+        } else {
+          sliceTemp.style.bottom = 0;
+          i = 0;
+        }
+        sliceTemp.style.bottom = 0;
+        sliceTemp.from = {
+          opacity: 0,
+        }
+        sliceTemp.to = {
+          opacity: 1,
+        }
+        sliceTemp.config = {
+          duration: animSpeed,
+        };
+        sliceTemp.delay = 100 + timeBuff;
+        if (v === slices - 1) {
+          sliceTemp.onRest = () => {
+            NivoAnimFinished();
+          }
+        }
+        timeBuff += 50;
+        v++;
         return sliceTemp;
       });
       setNivoSlices(tempNivoSlices);
@@ -330,6 +369,9 @@ function Swiper(props: SwiperProps) {
               src={item.src}
               style={item.style}
               imageStyle={item.imageStyle}
+              onRest={item.onRest}
+              onChange={item.onChange}
+              onDelayEnd={item.onDelayEnd}
             />
           ))}
         </div>
