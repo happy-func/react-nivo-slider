@@ -1,16 +1,17 @@
 import React from 'react';
-import { Swiper, Image, Link } from 'react-nivo-slider';
+import { Image, Link, Swiper } from 'react-nivo-slider';
 import 'react-nivo-slider/es/style';
 import 'react-nivo-slider/es/style/default';
-import { NemoJpg, ToyStoryJpg } from './img';
+import { NemoJpg, ToyStoryJpg, WalleJpg } from './img';
 
 export default function Default() {
   return (
     <Swiper>
       <Link href="//baidu.com">
-        <Image src={NemoJpg} alt="图片1" />
+        <Image src={NemoJpg} alt="图片1" transition="sliceDown" />
       </Link>
-      <Image src={ToyStoryJpg} alt="图片2" />
+      <Image src={ToyStoryJpg} alt="图片2" transition="sliceDownRight" />
+      <Image src={WalleJpg} alt="图片3" transition="sliceDownLeft" />
     </Swiper>
   );
 }

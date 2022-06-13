@@ -27,7 +27,7 @@
       "prettier --parser=typescript --write"
     ]
   },
-  "peerDependencies": {
+  "dependencies": {
     "react": "^16.12.0 || ^17.0.0",
     "react-spring": "^9.4.5"
   },

@@ -1,10 +1,15 @@
 import React, { createContext, CSSProperties, useEffect, useRef, useState } from 'react';
-import { clsx, getChildren } from '../../utils';
+import { clsx, getChildren, guid } from '../../utils';
 import BackgroundImage from '../background';
-import { NivoSliceProps } from '../nivo-slice';
+import NivoSlice, { NivoSliceProps } from '../nivo-slice';
 
 export const SwiperContext = createContext({
   swiperWidth: 800,
+  sliderImage: {
+    src: '',
+    alt: '',
+  },
+  animSpeed: 500,
 });
 
 function Swiper(props: SwiperProps) {
@@ -60,8 +65,69 @@ function Swiper(props: SwiperProps) {
     // TODO processCaption
   }
   function createSlices(): NivoSliceProps[] {
-    // TODO createSlices
-    return [];
+    const sliceWidth = Math.round(swiperRef.current.offsetWidth / slices);
+    let sliceHeight: number;
+    const node = document.querySelector(
+      `.slider-wrapper .nivoSlider .nivo-slider-image[src='${variablesRef.current.currentImage.src}']`,
+    );
+    if (node.parentElement.tagName.toLowerCase() === `a`) {
+      sliceHeight = node.parentElement.offsetHeight;
+    } else {
+      sliceHeight = node.offsetHeight;
+    }
+    const slicesArr: NivoSliceProps[] = [];
+    for (let i = 0; i < slices; i++) {
+      if (i === slices - 1) {
+        slicesArr.push({
+          uid: guid(),
+          config: {},
+          delay: 0,
+          from: {},
+          src: variablesRef.current.currentImage.src,
+          to: {},
+          imageStyle: {
+            position: 'absolute',
+            width: swiperRef.current.offsetWidth,
+            height: 'auto',
+            display: 'block',
+            top: 0,
+            left: -(sliceWidth + i * sliceWidth - sliceWidth),
+          },
+          style: {
+            left: sliceWidth * i,
+            width: swiperRef.current.offsetWidth - sliceWidth * i,
+            height: sliceHeight,
+            opacity: 0,
+            overflow: 'hidden',
+          },
+        });
+      } else {
+        slicesArr.push({
+          uid: guid(),
+          config: {},
+          delay: 0,
+          from: {},
+          src: variablesRef.current.currentImage.src,
+          to: {},
+          imageStyle: {
+            position: 'absolute',
+            width: swiperRef.current.offsetWidth,
+            height: 'auto',
+            display: 'block',
+            top: 0,
+            left: -(sliceWidth + i * sliceWidth - sliceWidth),
+          },
+          style: {
+            left: sliceWidth * i,
+            width: sliceWidth,
+            height: sliceHeight,
+            opacity: 0,
+            overflow: 'hidden',
+          },
+        });
+      }
+    }
+    return slicesArr;
   }
   // Event when Animation finishes
   function NivoAnimFinished() {
@@ -186,9 +252,7 @@ function Swiper(props: SwiperProps) {
 
       tempNivoSlices = tempNivoSlices.map(function (slice) {
         const sliceTemp = JSON.parse(JSON.stringify(slice));
-        sliceTemp.style = {
-          top: 0,
-        };
+        sliceTemp.style.top = 0;
         sliceTemp.from = {
           opacity: 0,
         };
@@ -235,13 +299,17 @@ function Swiper(props: SwiperProps) {
     const currentImage = slides[variablesRef.current.currentSlide].props;
     variablesRef.current.currentImage = currentImage;
     setSliderImage(currentImage);
+
+    let timer: number | undefined;
+    timer = setInterval(() => nivoRun(false), pauseTime);
+    return () => clearInterval(timer);
   }, []);
   useEffect(() => {
     window.addEventListener('resize', onResizeHandler);
     return () => window.removeEventListener('resize', onResizeHandler);
   }, []);
   return (
-    <SwiperContext.Provider value={{ swiperWidth }}>
+    <SwiperContext.Provider value={{ swiperWidth, sliderImage, animSpeed }}>
       <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
         <div className="nivoSlider" ref={swiperRef}>
           {children}
@@ -251,6 +319,19 @@ function Swiper(props: SwiperProps) {
             width={swiperWidth}
             height={sliderImage.height}
           />
+          {nivoSlices.map((item) => (
+            <NivoSlice
+              key={item.uid}
+              uid={item.uid}
+              from={item.from}
+              to={item.to}
+              config={item.config}
+              delay={item.delay}
+              src={item.src}
+              style={item.style}
+              imageStyle={item.imageStyle}
+            />
+          ))}
         </div>
       </div>
     </SwiperContext.Provider>
