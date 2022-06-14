@@ -1,6 +1,6 @@
 import React, { createContext, CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
-import { clsx, getChildren, guid, shuffle } from '../../utils';
+import { clsx, getChildren, guid } from '../../utils';
 import BackgroundImage from '../background';
 import NivoBox, { NivoBoxProps } from '../nivo-box';
 import NivoSlice, { NivoSliceProps } from '../nivo-slice';
@@ -42,7 +42,7 @@ function Swiper(props: SwiperProps) {
     style,
   } = props;
   // Set first background
-  const [sliderImage, setSliderImage] = useState({ src: '', alt: '', height: 'auto' });
+  const [sliderImage, setSliderImage] = useState<{ src: string; alt: string | undefined; height: number | string | undefined }>({ src: '', alt: '', height: 'auto' });
   const variablesRef = useRef<VariablesRefProps>({
     currentSlide: 0,
     currentImage: {
@@ -99,15 +99,7 @@ function Swiper(props: SwiperProps) {
   }
   function createSlices(): NivoSliceProps[] {
     const sliceWidth = Math.round(swiperRef.current.offsetWidth / slices);
-    let sliceHeight: number;
-    const node = document.querySelector(
-      `.slider-wrapper .nivoSlider .nivo-slider-image[src='${variablesRef.current.currentImage.src}']`,
-    );
-    if (node.parentElement.tagName.toLowerCase() === `a`) {
-      sliceHeight = node.parentElement.offsetHeight;
-    } else {
-      sliceHeight = node.offsetHeight;
-    }
+    let sliceHeight = swiperRef.current.offsetHeight;
     const slicesArr: NivoSliceProps[] = [];
     for (let i = 0; i < slices; i++) {
       if (i === slices - 1) {
@@ -160,23 +152,11 @@ function Swiper(props: SwiperProps) {
         });
       }
     }
-    // TODO background image animate height
-    // sliderImg.stop().animate({
-    //   height: $(vars.currentImage).height()
-    // }, settings.animSpeed);
     return slicesArr;
   }
   function createBoxes() {
     const boxWidth = Math.round(swiperRef.current.offsetWidth / boxCols);
-    let boxHeight: number;
-    const node = document.querySelector(
-      `.slider-wrapper .nivoSlider .nivo-slider-image[src='${variablesRef.current.currentImage.src}']`,
-    );
-    if (node?.parentElement?.tagName?.toLowerCase() === `a`) {
-      boxHeight = node.parentElement.offsetHeight;
-    } else {
-      boxHeight = node?.offsetHeight;
-    }
+    let boxHeight = swiperRef.current.offsetHeight;
     const boxArr: NivoBoxProps[] = [];
     for (let rows = 0; rows < boxRows; rows++) {
       for (let cols = 0; cols < boxCols; cols++) {
@@ -200,7 +180,8 @@ function Swiper(props: SwiperProps) {
               opacity: 0,
               left: boxWidth * cols,
               top: boxHeight * rows,
-              width: swiperWidth - boxWidth * cols,
+              width: swiperRef.current.offsetWidth - (boxWidth * cols),
+              height: swiperRef.current.offsetHeight,
             },
           });
         } else {
@@ -216,7 +197,7 @@ function Swiper(props: SwiperProps) {
               width: swiperRef.current.offsetWidth,
               height: 'auto',
               display: 'block',
-              top: -boxHeight * rows,
+              top: -(boxHeight * rows),
               left: -(boxWidth * cols),
             },
             style: {
@@ -224,17 +205,34 @@ function Swiper(props: SwiperProps) {
               left: boxWidth * cols,
               top: boxHeight * rows,
               width: boxWidth,
+              height: swiperRef.current.offsetHeight,
             },
           });
-          // TODO  $('.nivo-box[name="'+ cols +'"]', slider).height($('.nivo-box[name="'+ cols +'"] img', slider).height()+'px');
         }
       }
     }
-    // TODO background image animate height
-    // sliderImg.stop().animate({
-    //   height: $(vars.currentImage).height()
-    // }, settings.animSpeed);
+    setSliderImage(prevState => ({
+      ...prevState,
+      height: swiperRef.current.offsetHeight,
+    }));
     return boxArr;
+  }
+  // onMouseEnter
+  function onMouseEnter() {
+    if (pauseOnHover) {
+      variablesRef.current.paused = true;
+      clearInterval(timer.current);
+      timer.current = 0;
+    }
+  }
+  // onMouseLeave
+  function onMouseLeave() {
+    if (pauseOnHover) {
+      variablesRef.current.paused = false;
+      if (!timer.current) {
+        timer.current = setInterval(() => nivoRun(false), pauseTime);
+      }
+    }
   }
   // Event when Animation finishes
   function NivoAnimFinished() {
@@ -295,11 +293,6 @@ function Swiper(props: SwiperProps) {
 
     // Set vars.currentImage
     variablesRef.current.currentImage = slides[variablesRef.current.currentSlide].props;
-
-    // Set active links
-    if (controlNav) {
-      // TODO controlNav
-    }
 
     // Process caption
     processCaption();
@@ -571,7 +564,6 @@ function Swiper(props: SwiperProps) {
       totalBoxes = boxRows * boxCols;
       i = 0;
       timeBuff = 0;
-      shuffle(boxes);
       boxes.forEach((boxItem) => {
         boxItem.from = {
           opacity: 0,
@@ -586,6 +578,8 @@ function Swiper(props: SwiperProps) {
             NivoAnimFinished();
           };
         }
+        timeBuff += 20;
+        i++;
       });
       setNivoBoxes(boxes);
     } else if (
@@ -695,9 +689,10 @@ function Swiper(props: SwiperProps) {
     const currentImage = slides[variablesRef.current.currentSlide].props;
     variablesRef.current.currentImage = currentImage;
     setSliderImage({ ...currentImage, height: 'auto' });
+    setNivoSlices([]);
+    setNivoBoxes([]);
   }
   useEffect(() => {
-    console.log(slides);
     const swiperWid = swiperRef.current.offsetWidth;
     setSwiperWidth(swiperWid);
     variablesRef.current.totalSlides = slides.length;
@@ -726,7 +721,7 @@ function Swiper(props: SwiperProps) {
   return (
     <SwiperContext.Provider value={{ swiperWidth, sliderImage, animSpeed }}>
       <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
-        <div className="nivoSlider" ref={swiperRef}>
+        <div className="nivoSlider" ref={swiperRef} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
           {children}
           <BackgroundImage
             src={sliderImage.src}
