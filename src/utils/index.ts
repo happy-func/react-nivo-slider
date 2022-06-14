@@ -1,6 +1,6 @@
 import React from 'react';
 
-export function clsx(...list: (string | undefined)[]): string {
+export function clsx(...list: (string | undefined | boolean)[]): string {
   return list.filter((item) => !!item).join(` `);
 }
 
@@ -25,4 +25,14 @@ export function guid() {
   }
 
   return S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4();
+}
+
+// Shuffle an array
+export function shuffle(arr: any[]) {
+  for (
+    var j, x, i = arr.length;
+    i;
+    j = parseInt(String(Math.random() * i), 10), x = arr[--i], arr[i] = arr[j], arr[j] = x
+  );
+  return arr;
 }

@@ -1,17 +1,17 @@
 import React, { CSSProperties } from 'react';
 import { animated, useSpring } from 'react-spring';
 
-function NivoSlice(props: NivoSliceProps) {
-  const { to, from, config, delay, style, src, imageStyle, onRest, onChange, onDelayEnd } = props;
+function NivoBox(props: NivoBoxProps) {
+  const { from, to, config, delay, style, src, imageStyle, onRest, onChange, onDelayEnd } = props;
   const animateStyle = useSpring({ to, from, config, delay, onRest, onChange, onDelayEnd });
   return (
-    <animated.div style={{ ...style, ...animateStyle }} className="nivo-slice">
+    <animated.div style={{ ...style, ...animateStyle }} className="nivo-box">
       <img src={src} alt="image" style={imageStyle} />
     </animated.div>
   );
 }
 
-export interface NivoSliceProps {
+export interface NivoBoxProps {
   from: any;
   to: any;
   config: any;
@@ -25,6 +25,6 @@ export interface NivoSliceProps {
   onDelayEnd?: any;
 }
 
-NivoSlice.displayName = `NivoSlice`;
+NivoBox.displayName = `NivoBox`;
 
-export default NivoSlice;
+export default NivoBox;
