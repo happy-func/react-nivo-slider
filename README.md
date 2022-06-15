@@ -1,6 +1,6 @@
 # react-nivo-slider
 
-![version](https://img.shields.io/github/package-json/v/happy-func/react-nivo-slider/main) ![typescript](https://img.shields.io/npm/types/react-nivo-slider) ![esm](https://img.shields.io/static/v1?label=build&message=esm&color=blue) ![npm bundle size (version)](https://img.shields.io/bundlephobia/min/react-nivo-slider/1.0.0) ![GitHub Repo stars](https://img.shields.io/github/stars/happy-func/react-swim-button?style=social)
+![version](https://img.shields.io/github/package-json/v/happy-func/react-nivo-slider/main) ![typescript](https://img.shields.io/npm/types/react-nivo-slider) ![esm](https://img.shields.io/static/v1?label=build&message=esm&color=blue) ![npm bundle size (version)](https://img.shields.io/bundlephobia/min/react-nivo-slider/1.0.1) ![GitHub Repo stars](https://img.shields.io/github/stars/happy-func/react-swim-button?style=social)
 
 ## Getting Started
 
