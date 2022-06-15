@@ -86,7 +86,7 @@ same as a tag
 
 ```tsx
 type EffectType =
-  | 'random'
+  | `random`
   | `fade`
   | `fold`
   | `sliceDown`

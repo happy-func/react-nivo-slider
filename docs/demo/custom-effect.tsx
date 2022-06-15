@@ -7,7 +7,7 @@ import { NemoJpg, ToyStoryJpg, UpJpg, WalleJpg } from './img';
 export default function CustomEffect() {
   return (
     <Swiper theme="bar" effect="boxRain">
-      <Link href="//baidu.com">
+      <Link href="https://baidu.com">
         <Image src={NemoJpg} alt="图片1" transition="fold" />
       </Link>
       <Image src={ToyStoryJpg} alt="图片2" title="图片2" />
