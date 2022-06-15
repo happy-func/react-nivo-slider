@@ -42,10 +42,10 @@ export default function Default() {
 ### Swiper props
 
 | props | description | type | default |
-| :-- | :-- | :-- | :-- | --- |
+| :-- | :-- | :-- | :-- |
 | className | - | string | - |
 | style | - | CSSProperties | - |
-| theme | theme | `default` \| `light` \  | `dark` \| `bar` | default |
+| theme | theme | `default` \| `light` \| `dark` \| `bar` | default |
 | effect | transition effect | [EffectType](./#effecttype) | random |
 | slices | swiper slice | number | 15 |
 | boxCols | box col num | number | 8 |
