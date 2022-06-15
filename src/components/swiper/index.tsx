@@ -275,22 +275,11 @@ function Swiper(props: SwiperProps) {
     // Trigger the beforeChange callback
     beforeChange && beforeChange();
     // Set current background before change
-    if (!nudge) {
-      setSliderImage((prevState) => ({ ...prevState, src: variablesRef.current.currentImage.src }));
-    } else {
-      if (nudge === 'prev') {
-        setSliderImage((prevState) => ({
-          ...prevState,
-          src: variablesRef.current.currentImage.src,
-        }));
-      }
-      if (nudge === 'next') {
-        setSliderImage((prevState) => ({
-          ...prevState,
-          src: variablesRef.current.currentImage.src,
-        }));
-      }
-    }
+    setSliderImage({
+      height: 'auto',
+      src: variablesRef.current.currentImage.src,
+      alt: variablesRef.current.currentImage.alt || '',
+    });
     variablesRef.current.currentSlide++;
     // Trigger the slideshowEnd callback
     if (variablesRef.current.currentSlide === variablesRef.current.totalSlides) {
@@ -681,16 +670,15 @@ function Swiper(props: SwiperProps) {
   // controlEl Click
   function onControlElClick(e: any) {
     e.persist();
+    let target = e.target;
+    if (target.tagName === `IMG`) {
+      target = target.parentNode;
+    }
     if (variablesRef.current.running) return false;
-    if (e.target.dataset.src === currentImage.src) return false;
+    if (target.dataset.src === currentImage.src) return false;
     clearInterval(timer.current);
     timer.current = 0;
-    setSliderImage({
-      height: 'auto',
-      src: variablesRef.current.currentImage.src,
-      alt: variablesRef.current.currentImage.alt || '',
-    });
-    variablesRef.current.currentSlide = e.target.dataset.rel - 1;
+    variablesRef.current.currentSlide = target.dataset.rel - 1;
     nivoRun('control');
   }
   // onresize
@@ -795,7 +783,7 @@ function Swiper(props: SwiperProps) {
         {controlNav && (
           <div className={clsx('nivo-controlNav', controlNavThumbs && 'nivo-thumbs-enabled')}>
             {slides.map((item, index) => {
-              if (item.props['data-thumb']) {
+              if (controlNavThumbs) {
                 return (
                   <a
                     className={clsx('nivo-control', item.props.src === sliderImage.src && 'active')}
@@ -804,7 +792,7 @@ function Swiper(props: SwiperProps) {
                     data-src={item.props.src}
                     onClick={onControlElClick}
                   >
-                    <img src={item.props['data-thumb']} alt="thumb" />
+                    <img src={item.props['thumb']} alt="thumb" />
                   </a>
                 );
               }

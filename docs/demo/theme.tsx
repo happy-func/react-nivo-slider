@@ -10,7 +10,7 @@ import { NemoJpg, ToyStoryJpg, UpJpg, WalleJpg } from './img';
 export default function Theme() {
   return (
     <Swiper theme="bar">
-      <Link href="//baidu.com">
+      <Link href="https://baidu.com">
         <Image src={NemoJpg} alt="图片1" />
       </Link>
       <Image src={ToyStoryJpg} alt="图片2" title="图片2" />
