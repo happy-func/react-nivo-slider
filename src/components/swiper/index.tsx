@@ -670,11 +670,15 @@ function Swiper(props: SwiperProps) {
   // controlEl Click
   function onControlElClick(e: any) {
     e.persist();
+    let target = e.target;
+    if (target.tagName === `IMG`) {
+      target = target.parentNode;
+    }
     if (variablesRef.current.running) return false;
-    if (e.target.dataset.src === currentImage.src) return false;
+    if (target.dataset.src === currentImage.src) return false;
     clearInterval(timer.current);
     timer.current = 0;
-    variablesRef.current.currentSlide = e.target.dataset.rel - 1;
+    variablesRef.current.currentSlide = target.dataset.rel - 1;
     nivoRun('control');
   }
   // onresize
