@@ -493,7 +493,7 @@ function Swiper(props: SwiperProps) {
           opacity: 0,
         };
         sliceTemp.to = {
-          width: swiperWidth,
+          width: swiperRef.current.offsetWidth,
           opacity: 1,
         };
         sliceTemp.config = {
@@ -513,7 +513,7 @@ function Swiper(props: SwiperProps) {
     } else if (currentEffect === `fade`) {
       tempNivoSlices = createSlices();
       firstSlice = tempNivoSlices[0];
-      firstSlice.style.width = swiperWidth;
+      firstSlice.style.width = swiperRef.current.offsetWidth;
       firstSlice.from = {
         opacity: 0,
       };
@@ -533,7 +533,7 @@ function Swiper(props: SwiperProps) {
         width: 0,
       };
       firstSlice.to = {
-        width: swiperWidth,
+        width: swiperRef.current.offsetWidth,
       };
       firstSlice.config.duration = animSpeed * 2;
       firstSlice.onRest = () => {
@@ -550,7 +550,7 @@ function Swiper(props: SwiperProps) {
         width: 0,
       };
       firstSlice.to = {
-        width: swiperWidth,
+        width: swiperRef.current.offsetWidth,
       };
       firstSlice.config.duration = animSpeed * 2;
       firstSlice.onRest = () => {
@@ -623,7 +623,7 @@ function Swiper(props: SwiperProps) {
             with an anonymous function call */
             (function (row, col, time, i, totalBoxes) {
               const box = box2Darr[row][col];
-              const w = swiperWidth;
+              const w = swiperRef.current.offsetWidth;
               const h = swiperRef.current.offsetHeight;
               if (currentEffect === 'boxRainGrow' || currentEffect === 'boxRainGrowReverse') {
                 box.style.width = 0;
@@ -716,6 +716,7 @@ function Swiper(props: SwiperProps) {
     processCaption();
 
     timer.current = setInterval(() => nivoRun(false), pauseTime);
+    afterLoad && afterLoad();
     return () => clearInterval(timer.current);
   }, []);
   useEffect(() => {
