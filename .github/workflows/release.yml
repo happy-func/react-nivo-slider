@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 12 ]
+        os: [ ubuntu-latest ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: yarn install, build
+        run: |
+          yarn
+          yarn build
+          tar -zcvf release.tar.gz es src .fatherrc.ts .prettierignore .prettierrc.js .umirc.ts package.json tsconfig.json typings.d.ts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "release.tar.gz"
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_KEY }}
