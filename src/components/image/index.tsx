@@ -3,7 +3,7 @@ import { clsx } from '../../utils';
 import { EffectType, SwiperContext } from '../swiper';
 
 function Image(props: ImageProps) {
-  const { src, alt, title, className, style, transition, ...rest } = props;
+  const { src, alt, title, className, style, transition, thumb, ...rest } = props;
   const { swiperWidth: width } = useContext(SwiperContext);
   return (
     <img
@@ -13,6 +13,7 @@ function Image(props: ImageProps) {
       style={{ ...(style || {}), width, visibility: 'hidden', display: 'inline' }}
       className={clsx(`nivo-slider-image`, className)}
       data-transition={transition}
+      data-thumb={thumb}
       {...rest}
     />
   );
@@ -27,6 +28,7 @@ interface ImageProps {
   alt?: string;
   title?: string;
   transition?: EffectType;
+  thumb?: string;
 }
 
 export default Image;

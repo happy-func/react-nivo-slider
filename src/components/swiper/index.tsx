@@ -275,22 +275,11 @@ function Swiper(props: SwiperProps) {
     // Trigger the beforeChange callback
     beforeChange && beforeChange();
     // Set current background before change
-    if (!nudge) {
-      setSliderImage((prevState) => ({ ...prevState, src: variablesRef.current.currentImage.src }));
-    } else {
-      if (nudge === 'prev') {
-        setSliderImage((prevState) => ({
-          ...prevState,
-          src: variablesRef.current.currentImage.src,
-        }));
-      }
-      if (nudge === 'next') {
-        setSliderImage((prevState) => ({
-          ...prevState,
-          src: variablesRef.current.currentImage.src,
-        }));
-      }
-    }
+    setSliderImage({
+      height: 'auto',
+      src: variablesRef.current.currentImage.src,
+      alt: variablesRef.current.currentImage.alt || '',
+    });
     variablesRef.current.currentSlide++;
     // Trigger the slideshowEnd callback
     if (variablesRef.current.currentSlide === variablesRef.current.totalSlides) {
@@ -685,11 +674,6 @@ function Swiper(props: SwiperProps) {
     if (e.target.dataset.src === currentImage.src) return false;
     clearInterval(timer.current);
     timer.current = 0;
-    setSliderImage({
-      height: 'auto',
-      src: variablesRef.current.currentImage.src,
-      alt: variablesRef.current.currentImage.alt || '',
-    });
     variablesRef.current.currentSlide = e.target.dataset.rel - 1;
     nivoRun('control');
   }
@@ -795,7 +779,7 @@ function Swiper(props: SwiperProps) {
         {controlNav && (
           <div className={clsx('nivo-controlNav', controlNavThumbs && 'nivo-thumbs-enabled')}>
             {slides.map((item, index) => {
-              if (item.props['data-thumb']) {
+              if (controlNavThumbs) {
                 return (
                   <a
                     className={clsx('nivo-control', item.props.src === sliderImage.src && 'active')}
@@ -804,7 +788,7 @@ function Swiper(props: SwiperProps) {
                     data-src={item.props.src}
                     onClick={onControlElClick}
                   >
-                    <img src={item.props['data-thumb']} alt="thumb" />
+                    <img src={item.props['thumb']} alt="thumb" />
                   </a>
                 );
               }
