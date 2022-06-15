@@ -5,7 +5,14 @@ import BackgroundImage from '../background';
 import NivoBox, { NivoBoxProps } from '../nivo-box';
 import NivoSlice, { NivoSliceProps } from '../nivo-slice';
 
-export const SwiperContext = createContext({
+export const SwiperContext = createContext<{
+  swiperWidth: number;
+  sliderImage: {
+    src: string;
+    alt?: string;
+  };
+  animSpeed: number;
+}>({
   swiperWidth: 800,
   sliderImage: {
     src: '',
@@ -672,7 +679,7 @@ function Swiper(props: SwiperProps) {
     nivoRun('next');
   }
   // controlEl Click
-  function onControlElClick(e) {
+  function onControlElClick(e: any) {
     e.persist();
     if (variablesRef.current.running) return false;
     if (e.target.dataset.src === currentImage.src) return false;
