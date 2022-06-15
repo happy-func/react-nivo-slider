@@ -42,7 +42,11 @@ function Swiper(props: SwiperProps) {
     style,
   } = props;
   // Set first background
-  const [sliderImage, setSliderImage] = useState<{ src: string; alt: string | undefined; height: number | string | undefined }>({ src: '', alt: '', height: 'auto' });
+  const [sliderImage, setSliderImage] = useState<{
+    src: string;
+    alt: string | undefined;
+    height: number | string | undefined;
+  }>({ src: '', alt: '', height: 'auto' });
   const variablesRef = useRef<VariablesRefProps>({
     currentSlide: 0,
     currentImage: {
@@ -156,7 +160,7 @@ function Swiper(props: SwiperProps) {
   }
   function createBoxes() {
     const boxWidth = Math.round(swiperRef.current.offsetWidth / boxCols);
-    let boxHeight = swiperRef.current.offsetHeight;
+    let boxHeight = swiperRef.current.offsetHeight / boxRows;
     const boxArr: NivoBoxProps[] = [];
     for (let rows = 0; rows < boxRows; rows++) {
       for (let cols = 0; cols < boxCols; cols++) {
@@ -180,7 +184,7 @@ function Swiper(props: SwiperProps) {
               opacity: 0,
               left: boxWidth * cols,
               top: boxHeight * rows,
-              width: swiperRef.current.offsetWidth - (boxWidth * cols),
+              width: swiperRef.current.offsetWidth - boxWidth * cols,
               height: swiperRef.current.offsetHeight,
             },
           });
@@ -211,7 +215,7 @@ function Swiper(props: SwiperProps) {
         }
       }
     }
-    setSliderImage(prevState => ({
+    setSliderImage((prevState) => ({
       ...prevState,
       height: swiperRef.current.offsetHeight,
     }));
@@ -721,7 +725,12 @@ function Swiper(props: SwiperProps) {
   return (
     <SwiperContext.Provider value={{ swiperWidth, sliderImage, animSpeed }}>
       <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
-        <div className="nivoSlider" ref={swiperRef} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div
+          className="nivoSlider"
+          ref={swiperRef}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+        >
           {children}
           <BackgroundImage
             src={sliderImage.src}
