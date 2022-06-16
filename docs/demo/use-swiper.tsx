@@ -17,19 +17,19 @@ function CustomControl() {
         zIndex: 10,
       }}
     >
-      {[0, 1, 2, 3].map((item) => (
+      {swiper.slides.map((_, index) => (
         <div
-          key={item}
+          key={index}
           style={{
             width: 50,
             height: 10,
             borderRadius: 5,
-            backgroundColor: swiper.activeIndex === item ? `#fff` : '#999',
-            border: `1px solid ${swiper.activeIndex === item ? `#999` : `#fff`}`,
+            backgroundColor: swiper.activeIndex === index ? `#fff` : '#999',
+            border: `1px solid ${swiper.activeIndex === index ? `#999` : `#fff`}`,
             margin: `0 10px`,
             cursor: 'pointer',
           }}
-          onClick={() => swiper.slideTo(item)}
+          onClick={() => swiper.slideTo(index)}
         />
       ))}
     </div>

@@ -46,7 +46,7 @@ export default function Default() {
 | className | - | string | - |
 | style | - | CSSProperties | - |
 | theme | theme | `default` \| `light` \| `dark` \| `bar` | default |
-| effect | transition effect | [EffectType](./#effecttype) | random |
+| effect | transition effect | [EffectType](https://github.com/happy-func/react-nivo-slider/#effecttype) | random |
 | slices | swiper slice | number | 15 |
 | boxCols | box col num | number | 8 |
 | boxRows | - | number | 4 |
@@ -67,6 +67,17 @@ export default function Default() {
 | lastSlide | before last slide start animation | function | - |
 | slideshowEnd | on last slide show | function | - |
 
+### useSwiper
+
+| props | description | type | default |
+| :-- | :-- | :-- | :-- |
+| width | swiper width | number | - |
+| activeIndex | - | number | - |
+| slides | swiper slides | React.ReactElement<any, string \| React.JSXElementConstructor<any>>[] | [] |
+| slideTo | slide to target slide | (index: number) => void | - |
+| slideNext | slide to next slide | () => void | - |
+| slidePrev | slide to prev slide | () => void | - |
+
 ### Image
 
 | props | description | type | default |
@@ -75,7 +86,7 @@ export default function Default() {
 | style | - | CSSProperties | - |
 | alt | - | string | - |
 | title | caption inner text or node | string \| node | - |
-| transition | - | [EffectType](./#effecttype) | - |
+| transition | - | [EffectType](https://github.com/happy-func/react-nivo-slider/#effecttype) | - |
 | thumb | thumb image src when controlNavThumbs it's true | string | - |
 
 ### Link
