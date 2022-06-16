@@ -1,36 +1,21 @@
-import React , {
-  createContext ,
-  CSSProperties ,
-  forwardRef ,
-  useEffect ,
-  useImperativeHandle ,
-  useMemo ,
-  useRef ,
-  useState,
-} from 'react';
+import React, { createContext, CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
+import { SwiperContextProps } from '../../hooks';
 import { clsx, getChildren, guid } from '../../utils';
 import BackgroundImage from '../background';
 import NivoBox, { NivoBoxProps } from '../nivo-box';
 import NivoSlice, { NivoSliceProps } from '../nivo-slice';
 
-export const SwiperContext = createContext<{
-  swiperWidth: number;
-  sliderImage: {
-    src: string;
-    alt?: string;
-  };
-  animSpeed: number;
-}>({
-  swiperWidth: 800,
-  sliderImage: {
-    src: '',
-    alt: '',
-  },
-  animSpeed: 500,
+export const SwiperContext = createContext<SwiperContextProps>({
+  activeIndex: 0,
+  slideNext(): void {},
+  slidePrev(): void {},
+  slideTo(index: number): void {},
+  slides: [],
+  width: 800,
 });
 
-const Swiper = forwardRef((props: SwiperProps, ref) =>  {
+function Swiper(props: SwiperProps) {
   const {
     theme = `default`,
     effect = `random`,
@@ -76,7 +61,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     stop: false,
     controlNavEl: false,
   });
-  const swiperRef = useRef<any>(0);
+  const swiperRef = useRef<any>({});
   const [swiperWidth, setSwiperWidth] = useState(800);
   const timer = useRef(0);
   // nivo-slice
@@ -118,8 +103,8 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     }
   }
   function createSlices(): NivoSliceProps[] {
-    const sliceWidth = Math.round(swiperRef?.current?.offsetWidth / slices);
-    let sliceHeight = swiperRef?.current?.offsetHeight;
+    const sliceWidth = Math.round(swiperRef.current.offsetWidth / slices);
+    let sliceHeight = swiperRef.current.offsetHeight;
     const slicesArr: NivoSliceProps[] = [];
     for (let i = 0; i < slices; i++) {
       if (i === slices - 1) {
@@ -132,7 +117,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
           to: {},
           imageStyle: {
             position: 'absolute',
-            width: swiperRef?.current?.offsetWidth,
+            width: swiperRef.current.offsetWidth,
             height: 'auto',
             display: 'block',
             top: 0,
@@ -140,7 +125,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
           },
           style: {
             left: sliceWidth * i,
-            width: swiperRef?.current?.offsetWidth - sliceWidth * i,
+            width: swiperRef.current.offsetWidth - sliceWidth * i,
             height: sliceHeight,
             opacity: 0,
             overflow: 'hidden',
@@ -156,7 +141,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
           to: {},
           imageStyle: {
             position: 'absolute',
-            width: swiperRef?.current?.offsetWidth,
+            width: swiperRef.current.offsetWidth,
             height: 'auto',
             display: 'block',
             top: 0,
@@ -175,7 +160,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     return slicesArr;
   }
   function createBoxes() {
-    const boxWidth = Math.round(swiperRef?.current?.offsetWidth / boxCols);
+    const boxWidth = Math.round(swiperRef.current.offsetWidth / boxCols);
     let boxHeight = swiperRef.current.offsetHeight / boxRows;
     const boxArr: NivoBoxProps[] = [];
     for (let rows = 0; rows < boxRows; rows++) {
@@ -190,7 +175,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
             to: {},
             imageStyle: {
               position: 'absolute',
-              width: swiperRef?.current?.offsetWidth,
+              width: swiperRef.current.offsetWidth,
               height: 'auto',
               display: 'block',
               top: -boxHeight * rows,
@@ -200,7 +185,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
               opacity: 0,
               left: boxWidth * cols,
               top: boxHeight * rows,
-              width: swiperRef?.current?.offsetWidth - boxWidth * cols,
+              width: swiperRef.current.offsetWidth - boxWidth * cols,
               height: swiperRef.current.offsetHeight,
             },
           });
@@ -214,7 +199,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
             to: {},
             imageStyle: {
               position: 'absolute',
-              width: swiperRef?.current?.offsetWidth,
+              width: swiperRef.current.offsetWidth,
               height: 'auto',
               display: 'block',
               top: -(boxHeight * rows),
@@ -504,7 +489,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
           opacity: 0,
         };
         sliceTemp.to = {
-          width: swiperRef?.current?.offsetWidth,
+          width: swiperRef.current.offsetWidth,
           opacity: 1,
         };
         sliceTemp.config = {
@@ -524,7 +509,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     } else if (currentEffect === `fade`) {
       tempNivoSlices = createSlices();
       firstSlice = tempNivoSlices[0];
-      firstSlice.style.width = swiperRef?.current?.offsetWidth;
+      firstSlice.style.width = swiperRef.current.offsetWidth;
       firstSlice.from = {
         opacity: 0,
       };
@@ -544,7 +529,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
         width: 0,
       };
       firstSlice.to = {
-        width: swiperRef?.current?.offsetWidth,
+        width: swiperRef.current.offsetWidth,
       };
       firstSlice.config.duration = animSpeed * 2;
       firstSlice.onRest = () => {
@@ -561,7 +546,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
         width: 0,
       };
       firstSlice.to = {
-        width: swiperRef?.current?.offsetWidth,
+        width: swiperRef.current.offsetWidth,
       };
       firstSlice.config.duration = animSpeed * 2;
       firstSlice.onRest = () => {
@@ -634,7 +619,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
             with an anonymous function call */
             (function (row, col, time, i, totalBoxes) {
               const box = box2Darr[row][col];
-              const w = swiperRef?.current?.offsetWidth;
+              const w = swiperRef.current.offsetWidth;
               const h = swiperRef.current.offsetHeight;
               if (currentEffect === 'boxRainGrow' || currentEffect === 'boxRainGrowReverse') {
                 box.style.width = 0;
@@ -690,15 +675,20 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
       target = target.parentNode;
     }
     if (variablesRef.current.running) return false;
-    if (target.dataset.src === currentImage.src) return false;
+    const index = +target.dataset.rel;
+    slideTo(index);
+  }
+  function slideTo(index: number) {
+    if (variablesRef.current.currentSlide === index || index > variablesRef.current.totalSlides - 1)
+      return false;
     clearInterval(timer.current);
     timer.current = 0;
-    variablesRef.current.currentSlide = target.dataset.rel - 1;
+    variablesRef.current.currentSlide = index - 1;
     nivoRun('control');
   }
   // onresize
   function onResizeHandler() {
-    const swiperWid = swiperRef?.current?.offsetWidth;
+    const swiperWid = swiperRef.current.offsetWidth;
     setSwiperWidth(swiperWid);
     const currentImage = slides[variablesRef.current.currentSlide].props;
     variablesRef.current.currentImage = currentImage;
@@ -706,16 +696,8 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     setNivoSlices([]);
     setNivoBoxes([]);
   }
-  // 暴露方法
-  useImperativeHandle(ref, () => ({
-    onControlElClick,
-    onNextClick,
-    onPrevClick,
-    start,
-    stop,
-  }));
   useEffect(() => {
-    const swiperWid = swiperRef?.current?.offsetWidth;
+    const swiperWid = swiperRef.current.offsetWidth;
     setSwiperWidth(swiperWid);
     variablesRef.current.totalSlides = slides.length;
     if (randomStart) {
@@ -742,7 +724,16 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
     return () => window.removeEventListener('resize', onResizeHandler);
   }, []);
   return (
-    <SwiperContext.Provider value={{ swiperWidth, sliderImage, animSpeed }}>
+    <SwiperContext.Provider
+      value={{
+        slideTo: slideTo,
+        slideNext: onNextClick,
+        slidePrev: onPrevClick,
+        activeIndex: variablesRef.current.currentSlide,
+        slides,
+        width: swiperWidth,
+      }}
+    >
       <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
         <div
           className="nivoSlider"
@@ -754,8 +745,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
           <BackgroundImage
             src={sliderImage.src}
             alt={sliderImage.alt}
-            width={swiperWidth}
-            height={sliderImage.height}
+            style={{ width: swiperWidth, height: sliderImage.height }}
           />
           <animated.div className="nivo-caption" style={{ ...captionSpring, display: 'block' }}>
             {captionTitle}
@@ -836,7 +826,7 @@ const Swiper = forwardRef((props: SwiperProps, ref) =>  {
       </div>
     </SwiperContext.Provider>
   );
-})
+}
 
 Swiper.displayName = `Swiper`;
 
