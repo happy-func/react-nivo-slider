@@ -1,10 +1,11 @@
 import React, { CSSProperties, useContext } from 'react';
+import { useSwiper } from '../../hooks';
 import { clsx } from '../../utils';
 import { EffectType, SwiperContext } from '../swiper';
 
 function Image(props: ImageProps) {
   const { src, alt, title, className, style, transition, thumb, ...rest } = props;
-  const { swiperWidth: width } = useContext(SwiperContext);
+  const { width } = useSwiper();
   return (
     <img
       src={src}

@@ -1,11 +1,11 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties } from 'react';
+import { useSwiper } from '../../hooks';
 import { clsx } from '../../utils';
-import { SwiperContext } from '../swiper';
 
 function Link(props: LinkProps) {
   const { href, title, children, style, className, target, ...rest } = props;
-  const { sliderImage } = useContext(SwiperContext);
-  const active = sliderImage.src === children?.props?.src;
+  const { slides, activeIndex } = useSwiper();
+  const active = slides[activeIndex].props?.src === children?.props?.src;
   return (
     <a
       href={href}

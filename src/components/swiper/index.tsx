@@ -1,24 +1,18 @@
 import React, { createContext, CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { animated, useSpring } from 'react-spring';
+import { SwiperContextProps } from '../../hooks';
 import { clsx, getChildren, guid } from '../../utils';
 import BackgroundImage from '../background';
 import NivoBox, { NivoBoxProps } from '../nivo-box';
 import NivoSlice, { NivoSliceProps } from '../nivo-slice';
 
-export const SwiperContext = createContext<{
-  swiperWidth: number;
-  sliderImage: {
-    src: string;
-    alt?: string;
-  };
-  animSpeed: number;
-}>({
-  swiperWidth: 800,
-  sliderImage: {
-    src: '',
-    alt: '',
-  },
-  animSpeed: 500,
+export const SwiperContext = createContext<SwiperContextProps>({
+  activeIndex: 0,
+  slideNext(): void {},
+  slidePrev(): void {},
+  slideTo(index: number): void {},
+  slides: [],
+  width: 800,
 });
 
 function Swiper(props: SwiperProps) {
@@ -67,7 +61,7 @@ function Swiper(props: SwiperProps) {
     stop: false,
     controlNavEl: false,
   });
-  const swiperRef = useRef<HTMLDivElement>(document.createElement('div'));
+  const swiperRef = useRef<any>({});
   const [swiperWidth, setSwiperWidth] = useState(800);
   const timer = useRef(0);
   // nivo-slice
@@ -228,21 +222,27 @@ function Swiper(props: SwiperProps) {
     }));
     return boxArr;
   }
+  function start() {
+    variablesRef.current.paused = true;
+    clearInterval(timer.current);
+    timer.current = 0;
+  }
+  function stop() {
+    variablesRef.current.paused = false;
+    if (!timer.current) {
+      timer.current = setInterval(() => nivoRun(false), pauseTime);
+    }
+  }
   // onMouseEnter
   function onMouseEnter() {
     if (pauseOnHover) {
-      variablesRef.current.paused = true;
-      clearInterval(timer.current);
-      timer.current = 0;
+      start();
     }
   }
   // onMouseLeave
   function onMouseLeave() {
     if (pauseOnHover) {
-      variablesRef.current.paused = false;
-      if (!timer.current) {
-        timer.current = setInterval(() => nivoRun(false), pauseTime);
-      }
+      stop();
     }
   }
   // Event when Animation finishes
@@ -675,10 +675,15 @@ function Swiper(props: SwiperProps) {
       target = target.parentNode;
     }
     if (variablesRef.current.running) return false;
-    if (target.dataset.src === currentImage.src) return false;
+    const index = +target.dataset.rel;
+    slideTo(index);
+  }
+  function slideTo(index: number) {
+    if (variablesRef.current.currentSlide === index || index > variablesRef.current.totalSlides - 1)
+      return false;
     clearInterval(timer.current);
     timer.current = 0;
-    variablesRef.current.currentSlide = target.dataset.rel - 1;
+    variablesRef.current.currentSlide = index - 1;
     nivoRun('control');
   }
   // onresize
@@ -719,7 +724,16 @@ function Swiper(props: SwiperProps) {
     return () => window.removeEventListener('resize', onResizeHandler);
   }, []);
   return (
-    <SwiperContext.Provider value={{ swiperWidth, sliderImage, animSpeed }}>
+    <SwiperContext.Provider
+      value={{
+        slideTo: slideTo,
+        slideNext: onNextClick,
+        slidePrev: onPrevClick,
+        activeIndex: variablesRef.current.currentSlide,
+        slides,
+        width: swiperWidth,
+      }}
+    >
       <div className={clsx('slider-wrapper', `theme-${theme}`, className)} style={style}>
         <div
           className="nivoSlider"
@@ -731,8 +745,7 @@ function Swiper(props: SwiperProps) {
           <BackgroundImage
             src={sliderImage.src}
             alt={sliderImage.alt}
-            width={swiperWidth}
-            height={sliderImage.height}
+            style={{ width: swiperWidth, height: sliderImage.height }}
           />
           <animated.div className="nivo-caption" style={{ ...captionSpring, display: 'block' }}>
             {captionTitle}
