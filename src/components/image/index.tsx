@@ -1,7 +1,7 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties } from 'react';
 import { useSwiper } from '../../hooks';
 import { clsx } from '../../utils';
-import { EffectType, SwiperContext } from '../swiper';
+import { EffectType } from '../swiper';
 
 function Image(props: ImageProps) {
   const { src, alt, title, className, style, transition, thumb, ...rest } = props;
@@ -30,6 +30,7 @@ interface ImageProps {
   title?: string;
   transition?: EffectType;
   thumb?: string;
+  onClick?: () => void;
 }
 
 export default Image;

@@ -54,6 +54,7 @@ function Swiper(props: SwiperProps) {
       src: '',
       alt: '',
       title: '',
+      parentDisplayName: 'Swiper',
     },
     totalSlides: 0,
     running: false,
@@ -760,38 +761,40 @@ function Swiper(props: SwiperProps) {
               </a>
             </div>
           )}
-          {nivoSlices.map((item) => (
-            <NivoSlice
-              key={item.uid}
-              uid={item.uid}
-              from={item.from}
-              to={item.to}
-              config={item.config}
-              delay={item.delay}
-              src={item.src}
-              style={item.style}
-              imageStyle={item.imageStyle}
-              onRest={item.onRest}
-              onChange={item.onChange}
-              onDelayEnd={item.onDelayEnd}
-            />
-          ))}
-          {nivoBoxes.map((item) => (
-            <NivoBox
-              key={item.uid}
-              uid={item.uid}
-              from={item.from}
-              to={item.to}
-              config={item.config}
-              delay={item.delay}
-              src={item.src}
-              style={item.style}
-              imageStyle={item.imageStyle}
-              onRest={item.onRest}
-              onChange={item.onChange}
-              onDelayEnd={item.onDelayEnd}
-            />
-          ))}
+          <div className="image-slice-box" onClick={currentImage.onClick}>
+            {nivoSlices.map((item) => (
+              <NivoSlice
+                key={item.uid}
+                uid={item.uid}
+                from={item.from}
+                to={item.to}
+                config={item.config}
+                delay={item.delay}
+                src={item.src}
+                style={item.style}
+                imageStyle={item.imageStyle}
+                onRest={item.onRest}
+                onChange={item.onChange}
+                onDelayEnd={item.onDelayEnd}
+              />
+            ))}
+            {nivoBoxes.map((item) => (
+              <NivoBox
+                key={item.uid}
+                uid={item.uid}
+                from={item.from}
+                to={item.to}
+                config={item.config}
+                delay={item.delay}
+                src={item.src}
+                style={item.style}
+                imageStyle={item.imageStyle}
+                onRest={item.onRest}
+                onChange={item.onChange}
+                onDelayEnd={item.onDelayEnd}
+              />
+            ))}
+          </div>
         </div>
         {controlNav && (
           <div className={clsx('nivo-controlNav', controlNavThumbs && 'nivo-thumbs-enabled')}>
@@ -835,6 +838,8 @@ interface SlideImageProps {
   alt?: string;
   title?: string;
   transition?: EffectType;
+  parentDisplayName: `Swiper` | `Link`;
+  onClick?: () => void;
 }
 
 export interface VariablesRefProps {

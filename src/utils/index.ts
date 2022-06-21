@@ -8,12 +8,12 @@ export function getChildren(c: React.ReactNode) {
   const slides: React.ReactElement<any>[] = [];
   React.Children.toArray(c).forEach((child: any) => {
     if (child.type?.displayName === 'Image') {
-      slides.push(child);
+      slides.push({ ...child, props: { ...child.props, parentDisplayName: 'Swiper' } });
     } else if (
       child.type?.displayName === `Link` &&
       child.props.children?.type?.displayName === `Image`
     ) {
-      slides.push(child.props.children);
+      slides.push({ ...child.props.children, props: {...child.props.children.props, parentDisplayName: 'Link'} });
     }
   });
   return { slides };

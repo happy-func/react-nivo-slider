@@ -1,6 +1,6 @@
 # react-nivo-slider
 
-![version](https://img.shields.io/github/package-json/v/happy-func/react-nivo-slider/main) ![typescript](https://img.shields.io/npm/types/react-nivo-slider) ![esm](https://img.shields.io/static/v1?label=build&message=esm&color=blue) ![npm bundle size (version)](https://img.shields.io/bundlephobia/min/react-nivo-slider/1.1.0) ![GitHub Repo stars](https://img.shields.io/github/stars/happy-func/react-swim-button?style=social)
+![version](https://img.shields.io/github/package-json/v/happy-func/react-nivo-slider/main) ![typescript](https://img.shields.io/npm/types/react-nivo-slider) ![esm](https://img.shields.io/static/v1?label=build&message=esm&color=blue) ![npm bundle size (version)](https://img.shields.io/bundlephobia/min/react-nivo-slider/1.1.1) ![GitHub Repo stars](https://img.shields.io/github/stars/happy-func/react-swim-button?style=social)
 
 ## Getting Started
 
@@ -23,15 +23,22 @@ import 'react-nivo-slider/es/style';
 import 'react-nivo-slider/es/style/default';
 import { NemoJpg, ToyStoryJpg, UpJpg, WalleJpg } from './img';
 
-export default function Default() {
+const logger = (msg: string) => () => console.log(msg);
+
+export default function DefaultDemo() {
   return (
     <Swiper>
-      <Link href="//baidu.com">
-        <Image src={NemoJpg} alt="图片1" />
+      <Link href="https://www.surpath.net.cn">
+        <Image src={NemoJpg} alt="image1" onClick={logger('bad event handler')} />
       </Link>
-      <Image src={ToyStoryJpg} alt="图片2" title="图片2" />
-      <Image src={WalleJpg} alt="图片3" />
-      <Image src={UpJpg} alt="图片4" />
+      <Image
+        src={ToyStoryJpg}
+        alt="image2"
+        title="image2"
+        onClick={logger('image2 Clicked')}
+      />
+      <Image src={WalleJpg} alt="image3" onClick={logger('image3 Clicked')} />
+      <Image src={UpJpg} alt="image4" onClick={logger('image4 Clicked')} />
     </Swiper>
   );
 }
@@ -88,6 +95,7 @@ export default function Default() {
 | title | caption inner text or node | string \| node | - |
 | transition | - | [EffectType](https://github.com/happy-func/react-nivo-slider/#effecttype) | - |
 | thumb | thumb image src when controlNavThumbs it's true | string | - |
+| onClick | - | () => void | - |
 
 ### Link
 
