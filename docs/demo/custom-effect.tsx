@@ -8,11 +8,11 @@ export default function CustomEffect() {
   return (
     <Swiper theme="bar" effect="boxRain">
       <Link href="https://baidu.com">
-        <Image src={NemoJpg} alt="图片1" transition="fold" />
+        <Image src={NemoJpg} alt="image1" transition="fold" />
       </Link>
-      <Image src={ToyStoryJpg} alt="图片2" title="图片2" />
-      <Image src={WalleJpg} alt="图片3" transition="fade" />
-      <Image src={UpJpg} alt="图片4" />
+      <Image src={ToyStoryJpg} alt="image2" title="image2" />
+      <Image src={WalleJpg} alt="image3" transition="fade" />
+      <Image src={UpJpg} alt="image4" />
     </Swiper>
   );
 }

@@ -8,11 +8,11 @@ export default function Effect() {
   return (
     <Swiper theme="bar" effect="boxRandom">
       <Link href="https://baidu.com">
-        <Image src={NemoJpg} alt="图片1" />
+        <Image src={NemoJpg} alt="image1" />
       </Link>
-      <Image src={ToyStoryJpg} alt="图片2" title="图片2" />
-      <Image src={WalleJpg} alt="图片3" />
-      <Image src={UpJpg} alt="图片4" />
+      <Image src={ToyStoryJpg} alt="image2" title="image2" />
+      <Image src={WalleJpg} alt="image3" />
+      <Image src={UpJpg} alt="image4" />
     </Swiper>
   );
 }
